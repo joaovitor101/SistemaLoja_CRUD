@@ -2,15 +2,26 @@
 import express from 'express'
 // Iniciando o Express na variável app
 const app = express()
+app.use(flash());
 // Importando o Sequelize (com os dados da conexão)
 import connection from './config/sequelize-config.js'
 // Importando os Controllers (onde estão as rotas) 
 import ClientesController from "./controllers/ClientesController.js" 
 import ProdutosController from "./controllers/ProdutosController.js" 
 import PedidosController from "./controllers/PedidosController.js" 
-
+import UsersController from "./controllers/UsersController.js";
 // Permite capturar dados vindos de formulários
-
+import flash from "express-flash";
+import session from "express-session";
+// CONFIGURANDO O EXPRESS SESSION
+app.use(
+	session({
+		secret: "lojasecret",
+		cookie: { maxAge: 3600000 },
+		saveUninitialized: false,
+		resave: false,
+	})
+);
 app.use(express.urlencoded({extended: false}))
 
 
@@ -36,11 +47,14 @@ app.use(express.static('public'))
 app.use("/", ClientesController)
 app.use("/", ProdutosController)
 app.use("/", PedidosController)
-
+app.use("/", UsersController);
 // ROTA PRINCIPAL
-app.get("/",function(req,res){
-    res.render("index")
-})
+app.get("/", (req, res) => {
+	res.render("index", {
+		successMessage: req.flash("success"),
+		errorMessage: req.flash("error"),
+	});
+});
 
 // INICIA O SERVIDOR NA PORTA 8080
 app.listen(8080,function(erro){
