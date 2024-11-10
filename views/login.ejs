@@ -66,19 +66,43 @@
     .text-secondary a {
         color: #007bff;
     }
+
+    /* Popup personalizado */
+    #flash-message {
+        position: fixed;
+        top: 20px;  /* Distância do topo */
+        left: 50%;
+        transform: translateX(-50%); /* Centraliza horizontalmente */
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: 500;
+        text-align: center;
+        z-index: 1000;
+        display: none;
+        transition: opacity 0.2s;
+    }
+    /* Cores para mensagem de sucesso e erro */
+    .alert-success {
+        background-color: #4CAF50; /* Verde de sucesso mais claro */
+    }
+    .alert-danger {
+        background-color: #388E3C; /* Verde para erro mais escuro */
+    }
 </style>
 
-<div class="container">
-    <% if(successMessage.length) { %>
+<!-- Popup de mensagens de sucesso e erro -->
+<% if(successMessage.length) { %>
     <div id="flash-message" class="alert alert-success">
         <%= successMessage[0] %>
     </div>
-    <% } else if(errorMessage.length) { %>
+<% } else if(errorMessage.length) { %>
     <div id="flash-message" class="alert alert-danger">
         <%= errorMessage[0] %>
     </div>
-    <% } %>
+<% } %>
 
+<div class="container">
     <div class="card">
         <div class="card-header">
             <h1>Login de administrador</h1>
@@ -106,15 +130,20 @@
 </div>
 
 <script>
-    setTimeout(() => {
+    document.addEventListener("DOMContentLoaded", () => {
         const flashMessage = document.getElementById("flash-message");
         if (flashMessage) {
-            flashMessage.style.opacity = "0";
+            flashMessage.style.display = "block";  // Exibe o popup
+
+            // Desaparece automaticamente após 3 segundos
             setTimeout(() => {
-                flashMessage.style.display = "none";
-            }, 500);
+                flashMessage.style.opacity = "0";  // Inicia transição para desaparecer
+                setTimeout(() => {
+                    flashMessage.style.display = "none";
+                }, 500);
+            }, 1500);
         }
-    }, 3000);
+    });
 </script>
 
 <%- include ('partials/footer.ejs') %>
